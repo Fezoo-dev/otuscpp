@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.2)
 
+add_subdirectory(ip_filter)
+
 project(helloworld VERSION 0.0.$ENV{TRAVIS_BUILD_NUMBER})
 
 find_package(Boost COMPONENTS unit_test_framework REQUIRED)
