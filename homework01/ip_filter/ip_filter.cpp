@@ -42,7 +42,7 @@ auto filter(const IPPool& pool, int first_byte, int second_byte) {
 
 auto filter_any(const IPPool& pool, int value) {
     return pool.filter([value](const IpV4& ip) {
-        for (auto i = 0; i < ip.size(); i++)
+        for (size_t i = 0; i < ip.size(); i++)
             if (ip[i] == value)
                 return true;
         return false;
