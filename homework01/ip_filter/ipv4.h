@@ -9,7 +9,7 @@ class IpV4
 public:
     IpV4(const IpV4StringVector& ipv4Vector);
 
-    int operator[](int index) const;
+    int operator[](size_t index) const;
     size_t size() const;
 
     bool operator<(const IpV4&) const;

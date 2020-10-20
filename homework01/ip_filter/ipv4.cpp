@@ -6,7 +6,7 @@ IpV4::IpV4(const IpV4StringVector& ipv4Vector) : data(ipv4Vector.size())
     if (data.size() != 4)
         throw std::out_of_range("invalid ctor data");
 
-    for (auto i = 0; i < data.size(); i++)
+    for (size_t i = 0; i < data.size(); i++)
     {
         data[i] = std::stoi(ipv4Vector[i]);
         if (data[i] < 0 || data[i] > 255)
@@ -14,7 +14,7 @@ IpV4::IpV4(const IpV4StringVector& ipv4Vector) : data(ipv4Vector.size())
     }
 }
 
-int IpV4::operator[](int index) const {
+int IpV4::operator[](size_t index) const {
     if (index < 0 || index >= data.size())
         throw std::out_of_range("invalid data index");
 
