@@ -70,8 +70,8 @@ public:
 
     private:
         const IPPool& ip_pool;
-        Predicate predicate;
         IPPoolConstIterator current;
+        Predicate predicate;
         bool filter_used;
         char delimeter;
     };
