@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.2)
 
+add_subdirectory(ip_filter)
+
 project(helloworld VERSION 0.0.$ENV{TRAVIS_BUILD_NUMBER})
 
 find_package(Boost COMPONENTS unit_test_framework REQUIRED)
@@ -62,7 +64,7 @@ set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
 set(CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
 
-set(CPACK_PACKAGE_CONTACT example@example.com)
+set(CPACK_PACKAGE_CONTACT dtopcode@gmail.com)
 
 include(CPack)
 
