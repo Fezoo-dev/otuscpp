@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <algorithm>
 #include <iostream>
 #include <iterator>
 #include "ipv4.h"
