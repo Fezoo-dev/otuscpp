@@ -34,13 +34,13 @@ target_link_libraries(test_version
 
 if (MSVC)
     target_compile_options(helloworld_cli PRIVATE
-        /W4
+        /W4 /WX
     )
     target_compile_options(helloworld PRIVATE
-        /W4
+        /W4 /WX
     )
     target_compile_options(test_version PRIVATE
-        /W4
+        /W4 /WX
     )
 else ()
     target_compile_options(helloworld_cli PRIVATE

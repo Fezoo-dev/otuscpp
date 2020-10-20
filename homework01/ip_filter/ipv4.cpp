@@ -15,7 +15,7 @@ IpV4::IpV4(const IpV4StringVector& ipv4Vector) : data(ipv4Vector.size())
 }
 
 int IpV4::operator[](size_t index) const {
-    if (index < 0 || index >= data.size())
+    if (index >= data.size())
         throw std::out_of_range("invalid data index");
 
     return data.at(index);
