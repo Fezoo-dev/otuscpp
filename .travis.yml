@@ -2,25 +2,29 @@ language: cpp
 before_script:
 - sudo apt-get install libboost-test-dev -y
 - echo "deb http://archive.ubuntu.com/ubuntu xenial main universe" | sudo tee -a /etc/apt/sources.list
+- sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
 - sudo apt-get update -qq
+- sudo apt-get install -qq g++-6
+- sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 90
 script:
-- cd homework01
+- cd homework02
 - mkdir build
 - cd build
 - cmake ..
 - cmake --build .
-- cmake --build . --target test
+#- cmake --build . --target test
 - cmake --build . --target package
-- cmake --build ip_filter
-- cmake --build ip_filter --target package
+#- cmake --build ip_filter
+#- cmake --build ip_filter --target package
 - pwd
 - ls
-- ls ip_filter
+#- ls ip_filter
 deploy:
   provider: script
   skip_cleanup: true
   on:
     branch: main
   script:
-  - curl -T helloworld-0.0.$TRAVIS_BUILD_NUMBER-Linux.deb -ufezoo:$BINTRAY_API_KEY "https://api.bintray.com/content/fezoo/otuscpp/homework01/$TRAVIS_BUILD_NUMBER/helloworld-0.0.$TRAVIS_BUILD_NUMBER-Linux.deb;deb_distribution=trusty;deb_component=main;deb_architecture=amd64;publish=1"
-  - curl -T ip_filter-0.0.1-Linux.deb -ufezoo:$BINTRAY_API_KEY "https://api.bintray.com/content/fezoo/otuscpp/homework01/1/helloworld-0.0.1-Linux.deb;deb_distribution=trusty;deb_component=main;deb_architecture=amd64;publish=1"
+#  - curl -T helloworld-0.0.$TRAVIS_BUILD_NUMBER-Linux.deb -ufezoo:$BINTRAY_API_KEY "https://api.bintray.com/content/fezoo/otuscpp/homework01/$TRAVIS_BUILD_NUMBER/helloworld-0.0.$TRAVIS_BUILD_NUMBER-Linux.deb;deb_distribution=trusty;deb_component=main;deb_architecture=amd64;publish=1"
+#  - curl -T ip_filter-0.0.1-Linux.deb -ufezoo:$BINTRAY_API_KEY "https://api.bintray.com/content/fezoo/otuscpp/homework01/1/helloworld-0.0.1-Linux.deb;deb_distribution=trusty;deb_component=main;deb_architecture=amd64;publish=1"
+    - curl -T allocator-0.0.$TRAVIS_BUILD_NUMBER-Linux.deb -ufezoo:$BINTRAY_API_KEY "https://api.bintray.com/content/fezoo/otuscpp/homework02/$TRAVIS_BUILD_NUMBER/allocator-0.0.$TRAVIS_BUILD_NUMBER-Linux.deb;deb_distribution=trusty;deb_component=main;deb_architecture=amd64;publish=1"
