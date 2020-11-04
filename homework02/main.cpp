@@ -1,9 +1,9 @@
 #include <iostream>
 #include <map>
 
+#include "version.hpp"
 #include "reserve_allocator.cpp"
 #include "strange_struct.cpp"
-#include "MyAllocator.hpp"
 
 using namespace homework02;
 
@@ -104,6 +104,8 @@ Logger::~Logger()
 
 
 int main(){
+    std::cout << "Version: " << PROJECT_VERSION_PATCH << std::endl;
+
     // создание экземпляра std::map<int, int>
     std::map<int, int> vanila_map;
     // заполнение 10 элементами, где ключ-это число от 0 до 9, а значение -факториал ключа

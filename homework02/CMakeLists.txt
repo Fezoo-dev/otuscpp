@@ -10,13 +10,21 @@ endif()
 
 # find_package(Boost COMPONENTS unit_test_framework REQUIRED)
 
-configure_file(version.h.in version.h)
+configure_file(version.hpp.in version.hpp)
 
-add_executable(${project_name}_cli main.cpp)
+add_executable(${project_name}
+    main.cpp
+    reserve_allocator.cpp
+    strange_struct.cpp
+)
 
-set_target_properties(${project_name}_cli PROPERTIES
+set_target_properties(${project_name} PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
+)
+
+target_include_directories(${project_name}
+    PRIVATE "${CMAKE_BINARY_DIR}"
 )
 
 # set_target_properties(test_version PROPERTIES
@@ -33,18 +41,18 @@ set_target_properties(${project_name}_cli PROPERTIES
 # )
 
 if (MSVC)
-    target_compile_options(${project_name}_cli PRIVATE
+    target_compile_options(${project_name} PRIVATE
         /W4 /WX
     )
 else ()
-    target_compile_options(${project_name}_cli PRIVATE
+    target_compile_options(${project_name} PRIVATE
         -Wall -Wextra -pedantic -Werror
     )
 endif()
 
 
 
-install(TARGETS ${project_name}_cli RUNTIME DESTINATION bin)
+install(TARGETS ${project_name} RUNTIME DESTINATION bin)
 
 set(CPACK_GENERATOR DEB)
 

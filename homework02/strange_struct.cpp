@@ -14,7 +14,7 @@ namespace homework02
             _first = tmp->next;
             tmp.reset();
         }
-    };
+    }
 
     template <typename T, typename Allocator>
     size_t strange_struct<T, Allocator>::size() const noexcept

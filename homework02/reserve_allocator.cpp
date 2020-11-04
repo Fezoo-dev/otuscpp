@@ -5,7 +5,7 @@
 namespace homework02
 {
     template <class T, size_t size>
-    reserve_allocator<T, size>::reserve_allocator() : used(0), data(NULL){}
+    reserve_allocator<T, size>::reserve_allocator() : data(NULL), used(0){}
 
     template <class T, size_t size>
     T* reserve_allocator<T, size>::allocate(size_t)
