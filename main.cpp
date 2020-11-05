@@ -101,8 +101,6 @@ Logger::~Logger()
     std::cout << "Logger destructor " << i << std::endl;
 }
 
-
-
 int main(){
     std::cout << "Version: " << PROJECT_VERSION_PATCH << std::endl;
 
@@ -126,14 +124,14 @@ int main(){
     // заполнение 10 элементами от 0 до 9
     fill_container(strange_int);
     // выводить не просили, но если надо, то - вот.
-    std::cout << strange_int << std::endl;
+    //std::cout << strange_int << std::endl;
 
     // создание экземпляра своего контейнера для хранения значений типа int с новым аллокатором,ограниченным 10 элементами
     strange_struct<int, reserve_allocator<int, 10>> strange_allocator_int;
     //strange_struct<Logger, reserve_allocator<Logger, 10>> strange_allocator_struct;
     // заполнение 10 элементами от 0 до 9
     fill_container(strange_allocator_int);
-    // вывод на экран всех значений,хранящихся в контейнере
+    // вывод на экран всех значений, хранящихся в контейнере
     std::cout << strange_allocator_int << std::endl;
 
     return 0;
