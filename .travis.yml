@@ -1,11 +1,5 @@
+dist: focal
 language: cpp
-before_script:
-  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-  - sudo apt-get update -qq
-install:
-  - sudo apt-get install libboost-test-dev -y
-  - sudo apt-get install -qq g++-7
-  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 90
 script:
 - cmake .
 - cmake --build .
