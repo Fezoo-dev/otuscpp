@@ -1,10 +1,12 @@
 dist: focal
 language: cpp
+before_script:
+  - sudo apt install doxygen
 script:
-- cmake .
-- cmake --build .
-- cmake --build . --target package
-- doxygen doxygen.config
+  - cmake .
+  - cmake --build .
+  - cmake --build . --target package
+  - doxygen doxygen.config
 deploy:
   provider: script
   skip_cleanup: true
