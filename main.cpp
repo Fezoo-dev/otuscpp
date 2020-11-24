@@ -1,138 +1,97 @@
+#include <type_traits>
 #include <iostream>
-#include <map>
+#include <list>
+#include <vector>
+#include <tuple>
 
-#include "version.hpp"
-#include "reserve_allocator.cpp"
-#include "strange_struct.cpp"
+/** 
+ * Функция вывода `условного` ip-адреса в поток stream.
+ * Адрес может быть представлен в виде произвольного целочисленного типа.
+ * Выводится побайтово, начиная со старшего байта, с символом `.`(точка) в качестве разделителя.
+ * */
+template <typename T,
+    typename Integral = typename std::enable_if_t<
+        std::is_integral_v<T> and !std::is_floating_point_v<T>
+        >
+>
+// Целочисленные типы можно передавать по значению.
+void print_ip(std::ostream& stream, T ip){
+    constexpr auto TYPE_SIZE = sizeof(T);
+    constexpr auto BYTE_MASK = 0b11111111;
+    constexpr auto BYTE_SIZE = 8;
 
-using namespace homework02;
-
-namespace Factorial
-{
-    template <int n>
-    struct factorial_compile_time
-    {
-        static_assert(n > 0);
-        static const int value = n * factorial_compile_time<n - 1>::value;
-    };
-
-    template <>
-    struct factorial_compile_time<0>
-    {
-        static const int value = 1;
-    };
-
-    // 11! = 39916800 is bigger than max int value.
-    const int factorial_table[] = {
-        factorial_compile_time<0>::value,
-        factorial_compile_time<1>::value,
-        factorial_compile_time<2>::value,
-        factorial_compile_time<3>::value,
-        factorial_compile_time<4>::value,
-        factorial_compile_time<5>::value,
-        factorial_compile_time<6>::value,
-        factorial_compile_time<7>::value,
-        factorial_compile_time<8>::value,
-        factorial_compile_time<9>::value,
-        factorial_compile_time<10>::value
-    };
-
-    int factorial(int N)
-    {
-        return factorial_table[N];
+    // Сохраним все байты в массив в обратном порядке.
+    uint8_t bytes[TYPE_SIZE];
+    // В цикле сохраняем младший байт в массив, и отбрасываем его сдвигом вправо.
+    for(size_t i = 0; i < TYPE_SIZE; i++){
+        bytes[TYPE_SIZE - i - 1] = ip & BYTE_MASK;
+        ip >>= BYTE_SIZE;
     }
-} // namespace Factorial
 
-using namespace Factorial;
-
-template <typename Map>
-void fill_map(Map& map) noexcept{
-    for(int i = 0; i <= 9; i++)
-        map.insert({i, factorial(i)});
+    // Собственно вывод полученного результата с разделителем.
+    for(size_t i = 0; i < TYPE_SIZE; i++){
+        if(i > 0)
+            stream << '.';
+        stream << unsigned(bytes[i]);
+    }
 }
 
-template <typename Map>
-void print_map(std::ostream& stream, const Map& map) noexcept{
-    for(auto& [key, value] : map)
-        stream << key << ' ' << value << '\n';
-}
-
-template <typename Container>
-void fill_container(Container& contaiter) noexcept{
-    for(int i = 0; i < 10; i++)
-        contaiter.emplace_back(i);
-}
-
-template <typename Container>
-void print_container(std::ostream& stream, const Container& map) noexcept{
+/**
+ * Функция вывода `условного` ip-адреса в поток stream.
+ * Адрес представлен  в  виде контейнеров  `std::list` или `std::vector`.
+ * Выводится содержимое контейнера поэлементно и разделяется символом `.` (точка).
+ * */
+template <typename Container, typename Iterator = typename std::iterator_traits<typename Container::const_iterator>>
+void print_ip(std::ostream& stream, const Container& vector){
     bool first = true;
-    for(auto& item : map)
-    {
+    for(const auto& i : vector){
         if(!first)
-            stream << ' ';
+            stream << '.';
+
         first = false;
-        stream << item;
+        stream << i;
     }
-    stream << '\n';
 }
 
-class Logger
-{
-private:
-    int i;
-public:
-    Logger(int i);
-    ~Logger();
-
-    friend std::ostream& operator << (std::ostream& stream, const Logger& l){
-        stream << "logger(" << l.i << ") ";
-        stream << std::endl;
-        return stream;
+// TODO: Вывод адреса, если он представлен в виде `std::tuple` при условии, что все типы одинаковы.
+template<typename T, size_t tuple_size = std::tuple_size<T>::value>
+void print_ip(std::ostream& stream, const T& tuple){
+   for(size_t i = 0; i < tuple_size; i++){
+        if(i > 0)
+            stream << '.';
+        stream << std::get<i>(tuple); // Это не скомпилируется, потому что работает только в рантайме.
     }
-};
-
-Logger::Logger(int i) : i(i)
-{
-    std::cout << "Logger ctor " << i << std::endl;
 }
 
-Logger::~Logger()
-{
-    std::cout << "Logger destructor " << i << std::endl;
-}
+/**
+ * Вывод ip-адреса, если он задан в виде строки.
+ * Выводится как есть.
+ * */
+void print_ip(std::ostream& stream, const std::string& ip){
+    stream << ip;
+ }
 
 int main(){
-    std::cout << "Version: " << PROJECT_VERSION_PATCH << std::endl;
+//    std::cout << "Version: " << PROJECT_VERSION_PATCH << std::endl;
+    print_ip(std::cout, char(-1));
+    std::cout << std::endl;
+    print_ip(std::cout, short(0));
+    std::cout << std::endl;
+    print_ip(std::cout, int(2130706433));
+    std::cout << std::endl;
+    print_ip(std::cout, long(8875824491850138409));
+    std::cout << std::endl;
+    
+    print_ip(std::cout, std::string("192.168.0.1"));
+    std::cout << std::endl;
+    
+    print_ip(std::cout, std::vector{10, 10, 0, 5});
+    std::cout << std::endl;
+    print_ip(std::cout, std::list{12, 10, 3, 4});
+    std::cout << std::endl;
 
-    // создание экземпляра std::map<int, int>
-    std::map<int, int> vanila_map;
-    // заполнение 10 элементами, где ключ-это число от 0 до 9, а значение -факториал ключа
-    fill_map(vanila_map);
-    // выводить не просили, но если надо, то - вот.
-    //print_map(std::cout, vanila_map);
-
-    // создание  экземпляра std::map<int,  int>с  новым  аллокатором,ограниченным 10 элементами
-    auto map10 = std::map<int, int, std::less<int>, reserve_allocator<std::pair<const int, int>, 10>>{};
-    // заполнение 10 элементами, где ключ-это число от 0 до 9, а значение -факториал ключа
-    fill_map(map10);
-    // вывод на экран всех значений (ключ и значение разделены пробелом) хранящихся в контейнере
-    print_map(std::cout, map10);
-
-    // создание экземпляра своего контейнера для хранения значений типа int
-    strange_struct<int> strange_int;
-    //strange_struct<Logger> strange_int;
-    // заполнение 10 элементами от 0 до 9
-    fill_container(strange_int);
-    // выводить не просили, но если надо, то - вот.
-    //std::cout << strange_int << std::endl;
-
-    // создание экземпляра своего контейнера для хранения значений типа int с новым аллокатором,ограниченным 10 элементами
-    strange_struct<int, reserve_allocator<int, 10>> strange_allocator_int;
-    //strange_struct<Logger, reserve_allocator<Logger, 10>> strange_allocator_struct;
-    // заполнение 10 элементами от 0 до 9
-    fill_container(strange_allocator_int);
-    // вывод на экран всех значений, хранящихся в контейнере
-    std::cout << strange_allocator_int << std::endl;
+    // TODO: Вывод адреса, если он задан в виде tuple.
+    //print_ip(std::cout, std::make_tuple(1, 2, 3, 14));
 
     return 0;
 }

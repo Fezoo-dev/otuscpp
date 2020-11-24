@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.2)
 
-set(project_name "allocator")
+set(project_name "print_ip")
 
 if($ENV{TRAVIS_BUILD_NUMBER})
     project(${project_name} VERSION 0.0.$ENV{TRAVIS_BUILD_NUMBER})
@@ -8,14 +8,10 @@ else()
     project(${project_name} VERSION 0.0.321)
 endif()
 
-# find_package(Boost COMPONENTS unit_test_framework REQUIRED)
-
-configure_file(version.hpp.in version.hpp)
+configure_file(doxygen.config doxygen.config)
 
 add_executable(${project_name}
     main.cpp
-    reserve_allocator.cpp
-    strange_struct.cpp
 )
 
 set_target_properties(${project_name} PROPERTIES
@@ -37,8 +33,6 @@ else ()
         -Wall -Wextra -pedantic -Werror
     )
 endif()
-
-
 
 install(TARGETS ${project_name} RUNTIME DESTINATION bin)
 
