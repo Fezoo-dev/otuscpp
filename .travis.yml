@@ -1,7 +1,8 @@
 dist: focal
 language: cpp
 before_script:
-  - sudo apt install doxygen
+  - sudo apt-get update -qq
+  - sudo apt-get install doxygen -y -qq
 script:
   - cmake .
   - cmake --build .
