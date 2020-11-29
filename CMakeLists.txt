@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 3.2)
 
-project(ip_filter VERSION 0.0.1)
-
-set(CMAKE_BUILD_TYPE Debug)
+if($ENV{TRAVIS_BUILD_NUMBER})
+    project(ip_filter VERSION 0.1.$ENV{TRAVIS_BUILD_NUMBER})
+else()
+    project(ip_filter VERSION 0.1.0)
+endif()
 
 add_executable(ip_filter
     ip_filter.cpp ippool.cpp ipv4.cpp
