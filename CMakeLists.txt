@@ -2,12 +2,14 @@ cmake_minimum_required(VERSION 3.2)
 
 project(ip_filter VERSION 0.0.1)
 
+set(CMAKE_BUILD_TYPE Debug)
+
 add_executable(ip_filter
     ip_filter.cpp ippool.cpp ipv4.cpp
 )
 
 set_target_properties(ip_filter PROPERTIES
-    CXX_STANDARD 14
+    CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
 )
 

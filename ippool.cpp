@@ -1,6 +1,6 @@
 #include "ippool.h"
 
-void IPPool::push_back(const IpV4StringVector& ip) {
+void IPPool::push_back(const IPv4StringVector& ip) {
 	pool.push_back(ip);
 }
 

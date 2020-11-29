@@ -5,14 +5,14 @@
 #include <iterator>
 #include "ipv4.h"
 
-using IPPoolDataType = std::vector<IpV4>;
+using IPPoolDataType = std::vector<IPv4>;
 using IPPoolConstIterator = IPPoolDataType::const_iterator;
 using IPPoolIterator = IPPoolDataType::iterator;
 using IPPoolReverseIterator = IPPoolDataType::reverse_iterator;
 
 class IPPool {
 public:
-    void push_back(const IpV4StringVector& ip);
+    void push_back(const IPv4StringVector& ip);
 
     IPPoolConstIterator cbegin() const;
     IPPoolConstIterator cend() const;
@@ -29,9 +29,29 @@ public:
             : ip_pool(ip_pool)
             , current(ip_pool.pool.begin())
             , predicate(predicate)
-            , filter_used(false)
             , delimeter(delimeter){}
 
+        template <typename Action
+        //,typename Function = typename std::enable_if_t<std::is_function_v<Action>, void>
+            >
+        void for_each(Action action) {
+            reset();
+
+            for(next(); !end(); next())
+                action(*current);
+            
+        }
+
+        friend std::ostream& operator<<(std::ostream& stream, Filter<Predicate>& f) {
+            f.reset();
+
+            for(f.next(); !f.end(); f.next())
+                stream << *(f.current) << f.delimeter;
+
+            return stream;
+        }
+
+    private:
         bool end() const {
             return current == ip_pool.cend();
         }
@@ -49,31 +69,16 @@ public:
             return current;
         }
 
-        void Reset() {
+        void reset() {
             filter_used = false;
             current = ip_pool.cbegin();
-        }
-
-        /// <summary>
-        /// Maybe it's a bad idea to change inner state here,
-        /// but if you just want to display filtered data,
-        /// you can do it simply.
-        /// </summary>
-        friend std::ostream& operator<<(std::ostream& stream, Filter<Predicate>& f) {
-            f.Reset();
-
-            for(f.next(); !f.end(); f.next())
-                stream << *(f.current) << f.delimeter;
-
-            f.Reset();
-            return stream;
-        }
+        }        
 
     private:
         const IPPool& ip_pool;
         IPPoolConstIterator current;
         Predicate predicate;
-        bool filter_used;
+        bool filter_used = false;
         char delimeter;
     };
 
