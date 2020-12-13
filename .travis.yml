@@ -13,13 +13,13 @@ deploy:
   skip_cleanup: true
   keep_history: true
   on:
-    branch: homework03
+    branch: homework06
   script:
-    - curl -T print_ip-0.0.$TRAVIS_BUILD_NUMBER-Linux.deb -ufezoo:$BINTRAY_API_KEY "https://api.bintray.com/content/fezoo/otuscpp/homework03/$TRAVIS_BUILD_NUMBER/print_ip-0.0.$TRAVIS_BUILD_NUMBER-Linux.deb;deb_distribution=trusty;deb_component=main;deb_architecture=amd64;publish=1"
+    - curl -T bulk-0.0.$TRAVIS_BUILD_NUMBER-Linux.deb -ufezoo:$BINTRAY_API_KEY "https://api.bintray.com/content/fezoo/otuscpp/homework06/$TRAVIS_BUILD_NUMBER/bulk-0.0.$TRAVIS_BUILD_NUMBER-Linux.deb;deb_distribution=trusty;deb_component=main;deb_architecture=amd64;publish=1"
 - provider: pages
   skip_cleanup: true
   keep_history: true
   local_dir: html
   github_token: $GITHUB_TOKEN
   on:
-   branch: homework03
+   branch: homework06
