@@ -7,20 +7,35 @@ InputParser::InputParser(IParseStrategy *parse_strategy)
 {
 }
 
-void InputParser::add_state(IParserState* state){
+void InputParser::add_state(IParserState* state) noexcept
+{
     states.emplace(state->get_state(), state);
     if(!this->state)
         this->state = state;
 }
 
-void InputParser::parse(std::istream &from)
+void InputParser::parse(std::istream& from) noexcept
 {
+    ParserStateEnum next_state;
     while (true)
     {
-        auto next_state = state->handle_command(
-            parse_strategy->read(from));
+        try
+        {
+            state->handle_data(
+                parse_strategy->read(from)   
+            );
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
+            next_state = ParserStateEnum::error;
+        }
 
-        if(next_state == ParserStateEnum::end || next_state == ParserStateEnum::error)
+        // handle error state here;
+        if(next_state == ParserStateEnum::error)
+            break;
+
+        if(next_state == ParserStateEnum::end)
             break;
         
         else if (state->get_state() != next_state)

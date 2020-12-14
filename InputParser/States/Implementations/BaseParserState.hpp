@@ -5,8 +5,7 @@ class BaseParserState : public IParserState
 {
 public:
     explicit BaseParserState(std::string prefix);
-
-    ParserStateEnum handle_command(const StrategyReadResult& result) override;
+    ParserStateEnum handle_data(const StrategyReadData& data) override;
 
 protected:
     template <typename ForwardIt>
@@ -30,9 +29,10 @@ protected:
         filename_timestamp = 0;
     }
 
-    bool is_first_command() const;
-
-    void register_first_command();
+    [[nodiscard]]
+    bool is_first_command() const noexcept;
+    
+    void register_first_command() noexcept;
 
 private:
     std::string prefix;

@@ -14,8 +14,8 @@ class InputParser
 public:
     InputParser(IParseStrategy* parse_strategy);
 
-    void add_state(IParserState* state);
-    void parse(std::istream& from);
+    void add_state(IParserState* state) noexcept;
+    void parse(std::istream& from) noexcept;
 
 private:
     IParserState* state = nullptr;

@@ -8,13 +8,13 @@ ParserStateDynamic::ParserStateDynamic(std::string prefix) : BaseParserState(pre
 {
 }
 
-ParserStateEnum ParserStateDynamic::get_state(){
+ParserStateEnum ParserStateDynamic::get_state() const noexcept{
     return ParserStateEnum::dynamic_state;
 }
 
-ParserStateEnum ParserStateDynamic::handle_command(const StrategyReadResult& data)
+ParserStateEnum ParserStateDynamic::handle_data(const StrategyReadData& data)
 {
-    BaseParserState::handle_command(data);
+    BaseParserState::handle_data(data);
 
     if(data.is_eof){
         return ParserStateEnum::end;
@@ -58,11 +58,12 @@ ParserStateEnum ParserStateDynamic::handle_command(const StrategyReadResult& dat
     return get_state();
 }
 
-void ParserStateDynamic::print_commands_wrapper(){
+void ParserStateDynamic::print_commands_wrapper() noexcept
+{
     print_commands(commands.begin(), next(commands.begin(), index));
 }
 
-void ParserStateDynamic::reset()
+void ParserStateDynamic::reset() noexcept
 {
     index = 0;
     nesting_level = 0;

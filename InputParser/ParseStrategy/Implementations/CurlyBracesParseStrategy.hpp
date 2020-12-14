@@ -6,10 +6,10 @@
 
 class CurlyBracesParseStrategy : public IParseStrategy{
 public:
-    const StrategyReadResult& read(std::istream& stream) noexcept override;
+    const StrategyReadData& read(std::istream& stream) override;
 
     ~CurlyBracesParseStrategy() = default;
 
 private:
-    StrategyReadResult data;
+    StrategyReadData data;
 };

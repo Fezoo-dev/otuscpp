@@ -7,6 +7,7 @@ configure_file(doxygen.config.in doxygen.config)
 add_executable(${project_name}
     main.cpp
     InputParser/InputParser.cpp
+    InputParser/InputParserBuilder.cpp
     InputParser/ParseStrategy/IParseStrategy.cpp
     InputParser/ParseStrategy/Implementations/CurlyBracesParseStrategy.cpp
     InputParser/States/IParserState.cpp

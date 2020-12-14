@@ -9,9 +9,9 @@ class ParserStateStatic : public BaseParserState
 public:
     explicit ParserStateStatic(size_t container_size, std::string prefix);
 
-    ParserStateEnum handle_command(const StrategyReadResult&) override;
-    void reset() override;
-    ParserStateEnum get_state() override;
+    ParserStateEnum handle_data(const StrategyReadData&) override;
+    void reset() noexcept override;
+    ParserStateEnum get_state() const noexcept override;
 
     ~ParserStateStatic() = default;
 

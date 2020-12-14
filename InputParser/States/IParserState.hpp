@@ -1,5 +1,5 @@
 #pragma once
-#include "../ParseStrategy/StrategyReadResult.hpp"
+#include "../ParseStrategy/StrategyReadData.hpp"
 #include <ctime>
 #include <fstream>
 
@@ -9,8 +9,10 @@ enum class ParserStateEnum{
 };
 
 struct IParserState {
-    virtual ParserStateEnum get_state() = 0;
-    virtual ParserStateEnum handle_command(const StrategyReadResult&) = 0;
-    virtual void reset() = 0;
+    [[nodiscard]]
+    virtual ParserStateEnum get_state() const noexcept = 0;
+    [[nodiscard]]
+    virtual ParserStateEnum handle_data(const StrategyReadData&) = 0;
+    virtual void reset() noexcept = 0;
     virtual ~IParserState() = 0;
 };

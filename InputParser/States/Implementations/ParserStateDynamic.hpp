@@ -9,14 +9,15 @@ class ParserStateDynamic : public BaseParserState
 public:
     ParserStateDynamic(std::string prefix);
 
-    ParserStateEnum handle_command(const StrategyReadResult&) override;
-    void reset() override;
-    ParserStateEnum get_state() override;
+    ParserStateEnum handle_data(const StrategyReadData&) override;
+    ParserStateEnum get_state() const noexcept override;
+
+    void reset() noexcept override;
 
     ~ParserStateDynamic() = default;
 
 private:
-    void print_commands_wrapper();
+    void print_commands_wrapper() noexcept;
 
 private:
     std::vector<std::string> commands;

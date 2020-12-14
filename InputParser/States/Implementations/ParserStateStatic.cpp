@@ -9,16 +9,15 @@ ParserStateStatic::ParserStateStatic(size_t container_size, std::string prefix) 
     container_size(container_size)
 {
     commands.reserve(container_size);
-    //commands.assign(container_size, std::string());
 }
 
-ParserStateEnum ParserStateStatic::get_state(){
+ParserStateEnum ParserStateStatic::get_state() const noexcept{
     return ParserStateEnum::static_state;
 }
 
-ParserStateEnum ParserStateStatic::handle_command(const StrategyReadResult& data)
+ParserStateEnum ParserStateStatic::handle_data(const StrategyReadData& data)
 {
-    BaseParserState::handle_command(data);
+    BaseParserState::handle_data(data);
 
     if(data.is_eof){
         print_commands_wrapper();
@@ -49,11 +48,12 @@ ParserStateEnum ParserStateStatic::handle_command(const StrategyReadResult& data
     
 }
 
-void ParserStateStatic::print_commands_wrapper(){
-    print_commands(commands.begin(), next(commands.begin(), index));
-}
-
-void ParserStateStatic::reset()
+void ParserStateStatic::reset() noexcept
 {
     index = 0;
+}
+
+void ParserStateStatic::print_commands_wrapper()
+{
+    print_commands(commands.begin(), next(commands.begin(), index));
 }

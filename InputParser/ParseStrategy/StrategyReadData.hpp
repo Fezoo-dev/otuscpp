@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-struct StrategyReadResult
+struct StrategyReadData
 {
     bool is_eof;
     bool is_command;

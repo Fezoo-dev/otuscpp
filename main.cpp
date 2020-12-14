@@ -1,18 +1,10 @@
-#include <iostream>
-#include <fstream>
-#include <map>
-#include <queue>
-
-#include "InputParser/States/Implementations/ParserStateStatic.hpp"
-#include "InputParser/States/Implementations/ParserStateDynamic.hpp"
-#include "InputParser/ParseStrategy/Implementations/CurlyBracesParseStrategy.hpp"
-#include "InputParser/InputParser.hpp"
+#include "InputParser/InputParserBuilder.hpp"
 
 int main(int argc, char** argv)
 {
     if(argc < 2)
     {
-        std::cerr << "usage: " << argv[0] << " N";
+        std::cerr << "usage: " << argv[0] << " N" << std::endl;
         return 1;
     }
 
@@ -20,11 +12,9 @@ int main(int argc, char** argv)
 
     const std::string prefix = "bulk";
     
-    InputParser inputParser( new CurlyBracesParseStrategy());
-    inputParser.add_state(new ParserStateStatic(N, prefix));
-    inputParser.add_state(new ParserStateDynamic(prefix));
+    auto parser = InputParserBuilder::build(prefix, N);
 
-    inputParser.parse(std::cin);
+    parser.parse(std::cin);
 
     return 0;
 }

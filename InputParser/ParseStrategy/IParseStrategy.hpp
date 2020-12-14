@@ -1,11 +1,12 @@
 #pragma once
 #include <string>
 #include <iostream>
-#include "StrategyReadResult.hpp"
+#include "StrategyReadData.hpp"
 
 struct IParseStrategy
 {
+    [[nodiscard]]
+    virtual const StrategyReadData& read(std::istream& stream) = 0;
+
     virtual ~IParseStrategy() = 0;
-    
-    virtual const StrategyReadResult& read(std::istream& stream) noexcept = 0;
 };
