@@ -14,7 +14,6 @@ public:
     ParserStateEnum get_state() const noexcept override;
 
     ~ParserStateStatic() = default;
-
 private:
     void print_commands_wrapper();
 

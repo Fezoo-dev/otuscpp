@@ -1,6 +1,5 @@
 #include <queue>
 #include <string>
-#include <algorithm>
 
 #include "ParserStateStatic.hpp"
 

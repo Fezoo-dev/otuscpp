@@ -6,7 +6,7 @@ class BaseParserState : public IParserState
 public:
     explicit BaseParserState(std::string prefix);
     ParserStateEnum handle_data(const StrategyReadData& data) override;
-
+    
 protected:
     template <typename ForwardIt>
     void print_commands(ForwardIt from, ForwardIt to)
