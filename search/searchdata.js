@@ -2,7 +2,7 @@ var indexSectionsWithContent =
 {
   0: "_cdgm",
   1: "cm",
-  2: "cm",
+  2: "m",
   3: "_dg"
 };
 
