@@ -17,8 +17,8 @@ class StateBaseSuiteTests : public ::testing::Test
     void check_file_and_its_content(std::string expected_file_name, std::string expected_content) const;
 
     #pragma region wrapper for handling commands
-    void handle_command(const StrategyReadData& command);
-    void clear_expected_commands();
+    void handle_command(const StrategyReadData& command, bool wait = false);
+    void reset_state();
     std::string get_expected_content() const;
     void check_file_and_its_content(std::string expected_file_name) const;
     #pragma endregion

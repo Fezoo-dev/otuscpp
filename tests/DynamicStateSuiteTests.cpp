@@ -71,7 +71,7 @@ TEST_F(DynamicStateSuiteTests, HandleBlockEnd_AfterGreaterThanZeroCommands_Shoul
     handle_command(block_end_command);
 
     // Assert
-    check_file_and_its_content(expected_filename, get_expected_content());
+    check_file_and_its_content(expected_filename);
 }
 
 TEST_F(DynamicStateSuiteTests, BigNestingTest)
@@ -92,7 +92,7 @@ TEST_F(DynamicStateSuiteTests, BigNestingTest)
             handle_command(good_command);
             handle_command(block_end_command);
         }
-        handle_command(block_end_command);
+        handle_command(good_command);
         handle_command(block_end_command);
     }
     handle_command(good_command);
@@ -102,53 +102,19 @@ TEST_F(DynamicStateSuiteTests, BigNestingTest)
     check_file_and_its_content(expected_filename);
 }
 
-// TEST_F(DynamicStateSuiteTests, HandleOneCommand_ShouldReturnStaticState)
-// {
-//     ASSERT_EQ(state->handle_data(good_command), ParserStateEnum::static_state);
-// }
+TEST_F(DynamicStateSuiteTests, HandleTwoCorrectCommandBlocks_ShouldToCreateTwoFiles)
+{
+    std::string expected_filename;
+    for (int i = 0; i < 2; i++)
+    {
+        expected_filename = get_expected_filename();
 
-// TEST_F(DynamicStateSuiteTests, HandleLessThanBlockSizeCommands_ShouldNotToCreateFile)
-// {
-//     time_t now = std::time(nullptr);
-//     for(size_t i = 0; i < static_block_size - 1; i++)
-//         state->handle_data(good_command);
+        handle_command(good_command, true);
+        handle_command(block_end_command);
 
-//     std::ifstream stream{prefix + std::to_string(now) + ".log"};
+        check_file_and_its_content(expected_filename);
 
-//     ASSERT_EQ((bool)stream, false);
-// }
-
-// TEST_F(DynamicStateSuiteTests, HandleExactlyBlockSizeCommands_ShouldToCreateFile)
-// {
-//     // Arrange
-//     time_t now = std::time(nullptr);
-
-//     std::string expected_content = prefix;
-//     expected_content += ": ";
-//     for(size_t i = 0; i < static_block_size; i++){
-//         if(i != 0)
-//             expected_content += ", ";
-
-//         expected_content += good_command.data;
-//     }
-
-//     // Act
-//     for(size_t i = 0; i < static_block_size; i++)
-//         state->handle_data(good_command);
-        
-//     // Assert
-//     const std::string file_name = prefix + std::to_string(now) + ".log";
-//     std::ifstream stream{file_name};
-
-//     // First check: file should be exists.
-//     ASSERT_EQ((bool)stream, true);
-    
-//     std::string file_content;
-//     std::getline(stream, file_content);
-//     // Second check: file should contain expected content.
-//     ASSERT_EQ(file_content, expected_content);
-
-//     // Cleanup.
-//     std::remove(file_name.c_str());
-// }
+        reset_state();
+    }
+}
 #pragma endregion

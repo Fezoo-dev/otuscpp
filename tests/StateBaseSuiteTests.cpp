@@ -1,10 +1,13 @@
 #include "StateBaseSuiteTests.hpp"
 #include <ctime>
 #include <fstream>
+#include <thread>
+
+using namespace std::chrono_literals;
 
 void StateBaseSuiteTests::TearDown()
 {
-    clear_expected_commands();
+    reset_state();
     TearDownInternal();
 }
 
@@ -42,17 +45,20 @@ std::string StateBaseSuiteTests::get_expected_content() const
     return expected_content;
 }
 
-void StateBaseSuiteTests::handle_command(const StrategyReadData& data)
+void StateBaseSuiteTests::handle_command(const StrategyReadData& data, bool wait)
 {
     if(data.is_command)
         handled_commands.push_back(data.data);
 
     state->handle_data(data);
+    if(wait)
+        std::this_thread::sleep_for(1s);
 }
 
-void StateBaseSuiteTests::clear_expected_commands()
+void StateBaseSuiteTests::reset_state()
 {
     handled_commands.clear();
+    state->reset();
 }
 
 void StateBaseSuiteTests::check_file_and_its_content(std::string expected_file_name) const

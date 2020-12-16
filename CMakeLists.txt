@@ -4,16 +4,13 @@ configure_file(doxygen.config.in doxygen.config)
 
 set(project_name "bulk")
 
-set(project_source 
+file(GLOB project_source
     main.cpp
-    InputParser/InputParser.cpp
-    InputParser/InputParserBuilder.cpp
-    InputParser/ParseStrategy/IParseStrategy.cpp
-    InputParser/ParseStrategy/Implementations/CurlyBracesParseStrategy.cpp
-    InputParser/States/IParserState.cpp
-    InputParser/States/Implementations/BaseParserState.cpp
-    InputParser/States/Implementations/ParserStateStatic.cpp
-    InputParser/States/Implementations/ParserStateDynamic.cpp
+    InputParser/*.cpp
+    InputParser/ParseStrategy/*.cpp
+    InputParser/ParseStrategy/Implementations/*.cpp
+    InputParser/States/*.cpp
+    InputParser/States/Implementations/*.cpp
 )
 
 set(project_dirs
@@ -62,22 +59,23 @@ add_library(${project_lib} ${project_source})
 add_subdirectory(gtest)
 enable_testing()
 
-add_executable("bulk_tests" 
-    tests/tests.cpp
-    tests/StateBaseSuiteTests.cpp
-    tests/StaticStateSuiteTests.cpp
-    tests/DynamicStateSuiteTests.cpp
+set(tests_name "bulk_tests")
+
+file(GLOB tests_sources
+    "tests/*.cpp"
 )
 
-target_include_directories("bulk_tests" PRIVATE 
+add_executable(${tests_name} ${tests_sources})
+
+target_include_directories(${tests_name} PRIVATE 
     ${CMAKE_CURRENT_SOURCE_DIR}/tests
     ${project_dirs}
 )
 
-target_link_libraries("bulk_tests" 
+target_link_libraries(${tests_name} 
     ${project_lib}
     gtest
     gtest_main
 )
 
-add_test("bulk_tests" bulk_tests)
+add_test(${tests_name} bulk_tests)
