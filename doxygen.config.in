@@ -1,0 +1,5 @@
+PROJECT_NAME           = @PROJECT_NAME@
+PROJECT_NUMBER         = @PROJECT_VERSION_PATCH@
+FULL_PATH_NAMES        = YES
+HAVE_DOT               = YES
+EXTRACT_ALL            = YES
