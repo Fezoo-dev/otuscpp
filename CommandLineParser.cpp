@@ -1,19 +1,21 @@
 #include <iostream>
 #include "CommandLineParser.hpp"
 
-CommandLineParser::CommandLineParser()
+CommandLineParser::CommandLineParser(const strings &algorithms) noexcept : available_algorithms{std::move(algorithms)}
 {
     visible_options.add_options()
         (CommandLineOptions::help, "This help.")
-        (CommandLineOptions::exclude, po::value<strings>()->default_value({}, ""), "Exclude directories.")
-        (CommandLineOptions::file_mask, po::value<strings>()->default_value({ "*" }, ""), "File masks.")
-        (CommandLineOptions::block_size, po::value<size_t>()->default_value(8), "Block size in bytes for read.")
-        (CommandLineOptions::nesting_level, po::value<size_t>()->default_value(0), "Nesting level for search.");
+        (CommandLineOptions::exclude, po::value<strings>()->multitoken()->default_value({}, ""), "Exclude directory.")
+        (CommandLineOptions::file_mask, po::value<strings>()->multitoken()->default_value({ "*" }, ""), "File masks.")
+        (CommandLineOptions::block_size, po::value<size_t>()->default_value(1024), "Block size in bytes for read.")
+        (CommandLineOptions::nesting_level, po::value<size_t>()->default_value(0), "Nesting level for search.")
+        (CommandLineOptions::file_size, po::value<size_t>()->default_value(1), "Minimum size of file.")
+        (CommandLineOptions::algorithm, po::value<std::string>()->default_value(""), "Hash algorithm.")
         ;
 
     cmd_line_options.add(visible_options);
     cmd_line_options.add_options()
-        (CommandLineOptions::dirs, po::value<strings>(), "Directories for scan.");
+        (CommandLineOptions::dirs, po::value<strings>()->multitoken(), "Directories for scan.");
 }
 
 bool CommandLineParser::parse(int argc, char** argv, std::ostream& error_stream) noexcept
@@ -36,28 +38,36 @@ bool CommandLineParser::parse(int argc, char** argv, std::ostream& error_stream)
         //po::notify(vm);
 
         move_strings(vm, CommandLineOptions::dirs, dirs);
+
+        if (vm.count(CommandLineOptions::help) || dirs.size() == 0)
+        {
+            error_stream << std::string(argv[0]) << " [option [...]] path1 [path2 [...]]" << '\n';
+            error_stream << visible_options;
+            error_stream << "\nExample: \n"
+                         << std::string(argv[0]) << " "
+                         << "--" << CommandLineOptions::algorithm << "=md5 "
+                         << "--" << CommandLineOptions::block_size << "=512 "
+                         << "--" << CommandLineOptions::exclude << "=/home/ "
+                         << "--" << CommandLineOptions::exclude << "=~/Downloads "
+                         << "--" << CommandLineOptions::file_mask << "=*.txt "
+                         << "--" << CommandLineOptions::file_mask << "=*.png "
+                         << "--" << CommandLineOptions::file_size << "=10240 "
+                         << "--" << CommandLineOptions::nesting_level << "=3 "
+                         << "~/ /tmp" << '\n';
+            return false;
+        }
         move_strings(vm, CommandLineOptions::exclude, exclude_dirs);        
         move_strings(vm, CommandLineOptions::file_mask, file_masks);
-        
+
+        algorithm = std::move(vm[CommandLineOptions::algorithm].as<std::string>());
+
         block_size = vm[CommandLineOptions::block_size].as<size_t>();
         nesting_level = vm[CommandLineOptions::nesting_level].as<size_t>();
-
-        if (dirs.size() == 0)
-        {
-            error_stream << std::string(argv[0]) << " path1 [path2 [...]]" << '\n';
-            parseResult = false;
-        }
-
-        if (vm.count(CommandLineOptions::help))
-        {
-            error_stream << visible_options;
-            parseResult = false;
-        }
-
+        minimum_file_size = vm[CommandLineOptions::file_size].as<size_t>();
     }
     catch (std::exception& e)
     {
-        error_stream << e.what();
+        error_stream << e.what() << std::endl;
         parseResult = false;
     }
 
@@ -90,7 +100,32 @@ size_t CommandLineParser::get_block_size() const noexcept
     return block_size;
 }
 
+size_t CommandLineParser::get_minimum_file_size() const noexcept
+{
+    return minimum_file_size;
+}
+
 size_t CommandLineParser::get_nesting_level() const noexcept
 {
     return nesting_level;
+}
+
+const std::string& CommandLineParser::get_algorithm() const noexcept
+{
+    return algorithm;
+}
+
+void CommandLineParser::remove_duplicates() noexcept
+{
+    dirs.erase(
+        std::unique(dirs.begin(), dirs.end()),
+        dirs.end());
+
+    exclude_dirs.erase(
+        std::unique(exclude_dirs.begin(), exclude_dirs.end()),
+        exclude_dirs.end());
+
+    file_masks.erase(
+        std::unique(file_masks.begin(), file_masks.end()),
+        file_masks.end());
 }

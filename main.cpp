@@ -1,25 +1,50 @@
 #include <iostream>
 #include <boost/filesystem.hpp>
 #include "CommandLineParser.hpp"
-#include "FileFinder.hpp"
+#include "FileFinder/FileFinderBuilder.hpp"
+#include "FileComparer/FileComparer.hpp"
 
-int main(int argc, char** argv)
+#include "HashAlgorithms/IHashAlgorithm.hpp"
+#include "HashAlgorithms/NotHashAlgorithm.hpp"
+#include "HashAlgorithms/MD5HashAlgorithm.hpp"
+#include "HashAlgorithms/SHA1HashAlgorithm.hpp"
+
+int main(int argc, char **argv)
 {
-    CommandLineParser parser;
+    // Возможные алгоритмы хэширования.
+    std::map<std::string, std::shared_ptr<IHashAlgorithm>> hashes =
+        {
+            {"md5", std::make_shared<MD5HashAlgorithm>()},
+            {"sha1", std::make_shared<SHA1HashAlgorithm>()}};
 
-    if(!parser.parse(argc, argv, std::cerr))
-        std::cout << "parsed" << std::endl;
-   // return 1;
-    
-    //FileFinder ff(parser.get_directories(), parser.get_nesting_level());
-    std::vector<std::string> vvv = {"/home/fezoo/tmp/0", "/home/fezoo/tmp/00", "/home/fezoo/tmp/0"};
-    FileFinder ff(vvv, 0);
+    std::vector<std::string> available_hashes{hashes.size()};
+    for (const auto &kv : hashes)
+        available_hashes.push_back(kv.first);
 
-    for(auto& entry : ff)
-        std::cout << *entry << std::endl;
-    // for (auto it = ff.next(); !ff.end(); it = ff.next())
-    // {
-    //     std::cout << *it << std::endl;
-    // }
+    // Парсер должен знать возможные алгоритмы хэширования.
+    CommandLineParser parser{std::move(available_hashes)};;
+
+    if (!parser.parse(argc, argv, std::cerr))
+        return 1;
+
+    // Если не был указан алгоритм, используем фейковый, который ничего не хеширует.
+    std::shared_ptr<IHashAlgorithm> algorithm;
+    if(hashes.count(parser.get_algorithm()))
+        algorithm = hashes[parser.get_algorithm()];
+    else
+        algorithm = std::make_shared<NotHashAlgorithm>();
+
+
+    FileComparer file_comparer{algorithm, parser.get_block_size()};
+
+    auto file_finder = FileFinderBuilder::build(parser);
+    for (auto &entry : *file_finder)
+    {
+        //std::cout << *entry << std::endl;
+        file_comparer.add_di(std::move(*entry));
+    }
+    //std::cout << "end" << std::endl;
+    file_comparer.print();
+
     return 0;
 }
