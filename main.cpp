@@ -17,7 +17,7 @@ int main(int argc, char **argv)
             {"md5", std::make_shared<MD5HashAlgorithm>()},
             {"sha1", std::make_shared<SHA1HashAlgorithm>()}};
 
-    std::vector<std::string> available_hashes{hashes.size()};
+    std::vector<std::string> available_hashes;
     for (const auto &kv : hashes)
         available_hashes.push_back(kv.first);
 
@@ -27,14 +27,8 @@ int main(int argc, char **argv)
     if (!parser.parse(argc, argv, std::cerr))
         return 1;
 
-    // Если не был указан алгоритм, используем фейковый, который ничего не хеширует.
-    std::shared_ptr<IHashAlgorithm> algorithm;
-    if(hashes.count(parser.get_algorithm()))
-        algorithm = hashes[parser.get_algorithm()];
-    else
-        algorithm = std::make_shared<NotHashAlgorithm>();
-
-
+    std::shared_ptr<IHashAlgorithm> algorithm =  hashes[parser.get_algorithm()];
+    
     FileComparer file_comparer{algorithm, parser.get_block_size()};
 
     auto file_finder = FileFinderBuilder::build(parser);

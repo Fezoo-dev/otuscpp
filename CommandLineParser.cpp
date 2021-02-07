@@ -1,5 +1,6 @@
 #include <iostream>
 #include "CommandLineParser.hpp"
+#include "boost/algorithm/string/join.hpp"
 
 CommandLineParser::CommandLineParser(const strings &algorithms) noexcept : available_algorithms{std::move(algorithms)}
 {
@@ -10,7 +11,7 @@ CommandLineParser::CommandLineParser(const strings &algorithms) noexcept : avail
         (CommandLineOptions::block_size, po::value<size_t>()->default_value(1024), "Block size in bytes for read.")
         (CommandLineOptions::nesting_level, po::value<size_t>()->default_value(0), "Nesting level for search.")
         (CommandLineOptions::file_size, po::value<size_t>()->default_value(1), "Minimum size of file.")
-        (CommandLineOptions::algorithm, po::value<std::string>()->default_value(""), "Hash algorithm.")
+        (CommandLineOptions::algorithm,  po::value<std::string>()->default_value(available_algorithms[0]), ("Hash algorithm: " + boost::algorithm::join(available_algorithms, ", ")).c_str())
         ;
 
     cmd_line_options.add(visible_options);
